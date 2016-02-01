@@ -4,7 +4,7 @@
 // having a local undefined, window, Object etc allows slightly better minification:
 (function  (window, Object, Array, Error, JSON, undefined ) {
 
-   // v2.1.1-1-gb70a959
+   // v2.1.2
 
 /*
 
@@ -2585,7 +2585,7 @@ function wire (httpMethodName, contentSource, body, headers, withCredentials){
    return instanceApi(oboeBus, contentSource);
 }
 
-function applyDefaults( passthrough, url, httpMethodName, body, headers, withCredentials, cached ){
+function applyDefaults( passthrough, url, httpMethodName, body, headers, withCredentials, cached, processData ){
 
    headers = headers ?
       // Shallow-clone the headers array. This allows it to be
@@ -2597,9 +2597,11 @@ function applyDefaults( passthrough, url, httpMethodName, body, headers, withCre
    if( body ) {
       if( !isString(body) ) {
 
-         // If the body is not a string, stringify it. This allows objects to
+         // If the body is not a string and processData is true, stringify it. This allows objects to
          // be given which will be sent as JSON.
-         body = JSON.stringify(body);
+         if (processData) {
+            body = JSON.stringify(body);
+         }
 
          // Default Content-Type to JSON unless given otherwise.
          headers['Content-Type'] = headers['Content-Type'] || 'application/json';
@@ -2635,13 +2637,13 @@ function oboe(arg1) {
    // Unpipe and unshift would normally be present on a stream but this breaks
    // compatibility with Request streams.
    // See https://github.com/jimhigson/oboe.js/issues/65
-   
+
    var nodeStreamMethodNames = list('resume', 'pause', 'pipe'),
        isStream = partialComplete(
                      hasAllProperties
                   ,  nodeStreamMethodNames
                   );
-   
+
    if( arg1 ) {
       if (isStream(arg1) || isString(arg1)) {
 
@@ -2666,12 +2668,13 @@ function oboe(arg1) {
             arg1.body,
             arg1.headers,
             arg1.withCredentials,
-            arg1.cached
+            arg1.cached,
+            arg1.processData
          );
-         
+
       }
    } else {
-      // wire up a no-AJAX, no-stream Oboe. Will have to have content 
+      // wire up a no-AJAX, no-stream Oboe. Will have to have content
       // fed in externally and using .emit.
       return wire();
    }

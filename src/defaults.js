@@ -1,4 +1,4 @@
-function applyDefaults( passthrough, url, httpMethodName, body, headers, withCredentials, cached ){
+function applyDefaults( passthrough, url, httpMethodName, body, headers, withCredentials, cached, processData ){
 
    headers = headers ?
       // Shallow-clone the headers array. This allows it to be
@@ -10,9 +10,11 @@ function applyDefaults( passthrough, url, httpMethodName, body, headers, withCre
    if( body ) {
       if( !isString(body) ) {
 
-         // If the body is not a string, stringify it. This allows objects to
+         // If the body is not a string and processData is true, stringify it. This allows objects to
          // be given which will be sent as JSON.
-         body = JSON.stringify(body);
+         if (processData) {
+            body = JSON.stringify(body);
+         }
 
          // Default Content-Type to JSON unless given otherwise.
          headers['Content-Type'] = headers['Content-Type'] || 'application/json';

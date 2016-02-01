@@ -6,13 +6,13 @@ function oboe(arg1) {
    // Unpipe and unshift would normally be present on a stream but this breaks
    // compatibility with Request streams.
    // See https://github.com/jimhigson/oboe.js/issues/65
-   
+
    var nodeStreamMethodNames = list('resume', 'pause', 'pipe'),
        isStream = partialComplete(
                      hasAllProperties
                   ,  nodeStreamMethodNames
                   );
-   
+
    if( arg1 ) {
       if (isStream(arg1) || isString(arg1)) {
 
@@ -37,12 +37,13 @@ function oboe(arg1) {
             arg1.body,
             arg1.headers,
             arg1.withCredentials,
-            arg1.cached
+            arg1.cached,
+            arg1.processData
          );
-         
+
       }
    } else {
-      // wire up a no-AJAX, no-stream Oboe. Will have to have content 
+      // wire up a no-AJAX, no-stream Oboe. Will have to have content
       // fed in externally and using .emit.
       return wire();
    }
